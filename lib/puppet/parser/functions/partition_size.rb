@@ -16,17 +16,20 @@ Returns the partition size of gdisk -l device_path.
     output = `gdisk -l #{value}`
     regex = /^Disk #{value}/
     FILE_MAPPING = {
-      "kib" => "K",
-      "gib" => "G",
-      "tib" => "T",
-      "pib" => "P",
-      "eib" => "E",
+      "kib" => 1024 ** -1,
+      "mib" => 1,
+      "gib" => 1024,
+      "tib" => 1024 ** 2,
+      "pib" => 1024 ** 3,
+      "eib" => 1024 ** 4,
     }
     begin
       _binary = output.split("\n").find{ |e| e =~ regex }.split(",").map(&:strip).last
       num, unit = _binary.split(" ")
-      unit.gsub!(unit, FILE_MAPPING[unit.downcase.strip])
-      "#{num.to_i}#{unit}"
+
+      factor = FILE_MAPPING[unit.downcase.strip]
+      num = (num.to_i * factor - 4).to_s
+      "#{num}MiB"
     rescue
       raise Puppet::ParseError, 'partition_size(): Cannot parse the disk info.'
     end
