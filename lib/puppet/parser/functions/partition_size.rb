@@ -29,7 +29,7 @@ Returns the partition size of gdisk -l device_path.
 
       factor = FILE_MAPPING[unit.downcase.strip]
       num = (num.to_i * factor - 4).to_s
-      "#{num}MiB"
+      "#{num}M"
     rescue
       raise Puppet::ParseError, 'partition_size(): Cannot parse the disk info.'
     end
